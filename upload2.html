@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Upload</title>
+  <script>
+    async function handleSubmit(event) {
+      event.preventDefault();
+      
+      const fileInput = document.getElementById("file");
+      const file = fileInput.files[0];
+      const platform = localStorage.getItem("platform");
+      const audience = localStorage.getItem("audience");
+
+      if (!file || !platform || !audience) {
+        alert("Missing input.");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("platform", platform);
+      formData.append("audience", audience);
+
+      try {
+        const response = await fetch("https://YOUR_NGROK_URL.ngrok-free.app/analyze/", {
+          method: "POST",
+          body: formData
+        });
+
+        const result = await response.json();
+        alert("Success! Check console for result.");
+        console.log(result);
+      } catch (err) {
+        alert("Error: " + err.message);
+        console.error(err);
+      }
+    }
+  </script>
+</head>
+<body class="bg-gradient-to-r from-sky-50 to-violet-100">
+  <div class="flex items-center justify-center min-h-screen">
+    <form onsubmit="handleSubmit(event)" class="bg-white p-6 rounded-lg shadow-md w-full max-w-md">
+      <h2 class="text-xl mb-4">Upload Image or Video</h2>
+      <input type="file" id="file" name="file" accept="image/*,video/*,.txt" required class="mb-4" />
+      <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Submit</button>
+    </form>
+  </div>
+</body>
+</html>
